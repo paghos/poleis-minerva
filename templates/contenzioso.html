@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contenzioso {{idcontenzioso}} - MINERVA</title>
+{% extends "__style__.html" %}
+
+{% block content %}
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>Contenzioso {{idcontenzioso}}</h1>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID Anagrafica</th>
+                    <th>Nome completo o ragione sociale</th>
+                    <th>Email</th>
+                    <th>PEC</th>
+                    <th>Telefono</th>
+					<th>CF o P.IVA</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr>
+                        <td><a href="{% if tp_idanagrafica.startswith('PP') %}/riepilogo_privato?idanagrafica={{ tp_idanagrafica }}{% else %}/riepilogo_azienda?idanagrafica={{ tp_idanagrafica }}{% endif %}">{{ tp_idanagrafica }}</a></td>
+                        <td>{{ tp_nome }} {{ tp_cognome }} {{ tp_ragsociale }}</td>
+                        <td>{{ tp_email }}</td>
+                        <td>{{ tp_pec }}</td>
+                        <td>{{ tp_telefono }}</td>
+						<td>{{ tp_codicefiscale }} {{ tp_piva }}</td>
+                    </tr>
+
+            </tbody>
+        </table>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID Legale</th>
+                    <th>Nome completo</th>
+                    <th>Email</th>
+                    <th>PEC</th>
+                    <th>Telefono</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr>
+                        <td><a href="/riepilogo_legale?idlegale={{tp_idlegale}}">{{ tp_idlegale }}</a></td>
+                        <td>{{ tp_nome_legale }} {{ tp_cognome_legale }}</td>
+                        <td>{{ tp_email_legale }}</td>
+                        <td>{{ tp_pec_legale }}</td>
+                        <td>{{ tp_telefono_legale }}</td>
+                    </tr>
+                    <tr>
+                        <td><a href="/riepilogo_legale?idlegale={{legaledue.idlegale}}">{{ legaledue.idlegale }}</a></td>
+                        <td>{{ legaledue.nome }} {{ legaledue.cognome }}</td>
+                        <td>{{ legaledue.email }}</td>
+                        <td>{{ legaledue.pec }}</td>
+                        <td>{{ legaledue.telefono }}</td>
+                    </tr>
+            </tbody>
+        </table>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Utente che ha aggiunto il contenzioso</th>
+					<th>Data di aggiunta</th>
+                    <th>Utente che ha effettuato l'ultima modifica</th>
+					<th>Data ultima modifica</th>
+					<th>Ultima operazione effettuata</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr>
+                        <td>{{ tp_creato }}</td>
+						<td>{{ tp_datainserimento }}</td>
+                        <td>{{ tp_modificato }}</td>
+						<td>{{ tp_datamodifica }}</td>
+						<td>{{ tp_operazioneeffettuata }}</td>
+                    </tr>
+            </tbody>
+        </table>
+
+        <table class="table">
+            <tr>
+                <th>ID Contenzioso</th>
+                <td>{{ idcontenzioso }}</td>
+            </tr>
+            <tr>
+                <th>Numero di protocollo</th>
+                <td>{{ tp_numeroprotocollo }}</td>
+            </tr>
+            <tr>
+                <th>Data di protocollo</th>
+                <td>{{ tp_dataprotocollo }}</td>
+            </tr>
+            <tr>
+                <th>Oggetto</th>
+                <td>{{ tp_oggetto }}</td>
+            </tr>
+            <tr>
+                <th>Tipologia</th>
+                <td>{{ tp_tipologia }}</td>
+            </tr>
+            <tr>
+                <th>Anno tributo</th>
+                <td>{{ tp_annotributouno }} - {{ tp_annotributodue }}</td>
+            </tr>
+            <tr>
+                <th>Anno presentazione del ricorso</th>
+                <td>{{ tp_annopresentazione }}</td>
+            </tr>
+            <tr>
+                <th>Valore</th>
+                <td>{{ tp_valore }} €</td>
+            </tr>
+            <tr>
+                <th>Avvocato dell'ente</th>
+                <td>{{ tp_avvocatoente }}</td>
+            </tr>
+            <tr>
+                <th>Autorità giudiziaria</th>
+                <td>{{ tp_autoritagiudiziaria }}</td>
+            </tr>
+            <tr>
+                <th>Numero RG</th>
+                <td>{{ tp_numerorg }}</td>
+            </tr>
+			<tr>
+				<th>Data dell'udienza</th>
+				<td>{{ tp_dataudienza.strftime("%d/%m/%Y") }}</td>
+			</tr>
+
+            <tr>
+                <th>Sentenza</th>
+                <td>{{ tp_sentenza }}</td>
+            </tr>
+            <tr>
+                <th>Note</th>
+                <td>{{ tp_note }}</td>
+            </tr>
+
+        </table>
+        <div class="d-flex justify-content-between align-items-center">
+            <form method="GET" action="/nuovo_contenzioso">
+                <!-- ... (altri campi dell'anagrafica) ... -->
+                <input type="hidden" name="idanagrafica" value="{{ tp_idanagrafica }}">
+				        <a href="/modifica_contenzioso?idcontenzioso={{ idcontenzioso }}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Modifica
+        </a>
+            </form>
+            <button class="btn btn-primary" id="stampaButton" onclick="stampaPagina()">Stampa</button>
+        </div>	
+<br>		
+<div class="centered-form">
+	  <div style="margin-top: 10px;">
+<form action="/upload_file" method="POST" enctype="multipart/form-data">
+    <input type="file" name="files" multiple> <!-- Aggiungi l'attributo "multiple" -->
+    <input type="hidden" name="idcontenzioso" value="{{ idcontenzioso }}">
+    <input type="submit" value="Carica File">
+</form>
+</div>
+<br>
+<p><b>Avvertenze</b></p> 
+<p>1. Se viene caricato un file .ZIP esso sarà estratto automaticamente.</p> 
+<p>2. Se due file con lo stesso nome verranno caricati sarà mantenuto solamente il file caricato per ultimo.</p> 
+
+<br>
+<table class="table">
+    <thead>
+        <tr>
+            <th>File</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for file_name in file_list %}
+            <tr>
+                <td>{{ file_name }}</td>
+                <td>
+                    <a href="{{ url_for('visualizza_file', idcontenzioso=idcontenzioso, file_name=file_name) }}" target="_blank" class="btn btn-info">
+                        <i class="fas fa-eye"></i> Visualizza
+                    </a>
+                    <a href="{{ url_for('scarica_file', idcontenzioso=idcontenzioso, file_name=file_name) }}" class="btn btn-success">
+                        <i class="fas fa-download"></i> Scarica
+                    </a>
+                    <a href="{{ url_for('cancella_file', idcontenzioso=idcontenzioso, file_name=file_name) }}" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Cancella
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td></td>
+            <td>
+                <a href="{{ url_for('scarica_tutti_i_file', idcontenzioso=idcontenzioso) }}" class="btn btn-warning">
+                    <i class="fas fa-download"></i> Scarica Tutti
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+    </div>
+
+
+    <!-- Collegamento a Bootstrap JS (facoltativo) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <script>
+        function stampaPagina() {
+            // Nasconde il pulsante "Stampa"
+            document.getElementById("stampaButton").style.display = "none";
+
+            // Apre il menu di stampa del browser
+            window.print();
+            // Ripristina il pulsante "Stampa" dopo la stampa
+            document.getElementById("stampaButton").style.display = "block";
+
+        }
+    </script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+
+</body>
+	  <div style="margin-top: 50px;">
+{% endblock %}
+</html>

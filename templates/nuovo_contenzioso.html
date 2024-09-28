@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aggiungi un contenzioso - MINERVA</title>
+{% extends "__style__.html" %}
+
+{% block content %}
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Aggiungi Contenzioso</h1>
+        <form method="POST" action="/nuovo_contenzioso">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3 row">
+                        <label for="numeroprotocollo" class="col-sm-4 col-form-label">Numero Protocollo (*)</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="numeroprotocollo" value="{{ai_numeroprotocollo}}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="dataprotocollo" class="col-sm-4 col-form-label">Data Protocollo (*)</label>
+                        <div class="col-sm-8">
+                            <input type="date" class="form-control" name="dataprotocollo" value="{{ai_dataprotocollo}}" required>
+                        </div>
+                    </div>
+
+					<div class="mb-3 row">
+						<label for="tipologia" class="col-sm-4 col-form-label">Tipologia (*)</label>
+						<div class="col-sm-8">
+							<select class="form-control" name="tipologia" required>
+								<option value="Scelta...">Scelta...</option>
+								<option value="IMU">IMU</option>
+								<option value="TARI">TARI</option>
+								<option value="Acqua">Acqua</option>
+								<option value="COSAP">COSAP</option>
+								<option value="Imposta di Soggiorno">Imposta di Soggiorno</option>
+								<option value="Varia">Varia</option>
+							</select>
+						</div>
+					</div>
+
+
+					<div class="mb-3 row">
+						<label for="annotributouno" class="col-sm-4 col-form-label">Annualità tributo (*)</label>
+						<div class="col-sm-8 d-flex">
+							<input type="text" class="form-control" name="annotributouno" id="annotributouno" value="{{ai_annotributouno}}" required>
+							<span class="mx-2">-</span>
+							<input type="text" class="form-control" name="annotributodue" id="annotributodue" value="{{ai_annotributodue}}"required>
+						</div>
+					</div>
+
+
+                    <div class="mb-3 row">
+                        <label for="annopresentazione" class="col-sm-4 col-form-label">Anno Presentazione (*)</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="annopresentazione" value="{{ai_annopresentazione}}" required value="2024">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="nomecompletoavvocatoente" class="col-sm-4 col-form-label">Avvocato ente</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="nomecompletoavvocatoente" id="nomecompletoavvocatoente" value="{{ai_nomecompletoavvocatoente}}" oninput="searchAvvocatoEnte()">
+                        </div>
+                    </div>
+
+				
+					<div class="mb-3 row" id="searchResultsDropdownAvvocatoEnte">
+                        <label for="searchResultAvvocatoEnte" class="form-label">Corrispondenze</label>
+                        <select class="form-select" id="searchResultAvvocatoEnte" size="5"></select>
+                    </div>
+
+
+                    <div class="mb-3 row">
+                        <label for="idanagraficaavvocatoente" class="col-sm-4 col-form-label">ID Anagrafica Avv. Ente</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="idavvocatoente" id="idavvocatoente" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="autoritagiudiziaria" class="col-sm-4 col-form-label">Autorità Giudiziaria</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="autoritagiudiziaria" id="autoritagiudiziaria" oninput="searchAutoritaGiudiziaria()">
+                        </div>
+                    </div>
+					
+					<div class="mb-3 row" id="searchResultsDropdownAutoritaGiudiziaria">
+                        <label for="searchResultAutoritaGiudiziaria" class="form-label">Corrispondenze</label>
+                        <select class="form-select" id="searchResultAutoritaGiudiziaria" size="5"></select>
+                    </div>
+					
+                    <div class="mb-3 row">
+                        <label for="numerorg" class="col-sm-4 col-form-label">Numero RG</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="numerorg">
+                        </div>
+                    </div>
+
+					<div class="mb-3 row">
+						<label for="dataudienza" class="col-sm-4 col-form-label">Data Udienza</label>
+						<div class="col-sm-8">
+							<input type="date" class="form-control" name="dataudienza" value="1970-01-01">
+						</div>
+					</div>
+
+                    <div class="mb-3 row">
+                        <label for="sentenza" class="col-sm-4 col-form-label">Sentenza</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="sentenza" >
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="oggetto" class="col-sm-4 col-form-label">Oggetto (*)</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="oggetto" required value="{{ai_oggetto}}">
+                        </div>
+                    </div>
+
+					<div class="mb-3 row">
+						<label for="valore" class="col-sm-4 col-form-label">Valore (*) <i>(usare il punto)</i></label>
+						<div class="col-sm-8">
+							<input type="text" pattern="^[0-9]*\.?[0-9]*$" class="form-control" name="valore" required value="{{ai_valore}}"
+								   placeholder="Es: 102024.10" title="Inserire solo numeri e indicare con il punto (.) i decimali. Ad esempio, il valore 100.000,10€, deve essere scritto come 100000.10">
+						</div>
+					</div>
+
+                    <div class="mb-3 row">
+                        <label for="note" class="col-sm-4 col-form-label">Note</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="note" value="{{ai_message}}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3 row">
+                        <label for="pec" class="col-sm-4 col-form-label">PEC Legale (*)</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="pec" id="pec" oninput="searchLegal()" value="{{ai_pec}}" required>
+							<p class="form-text text-muted">Se nessun legale è presente inserire la seguente PEC: legalenonassegnato@example.com </p>
+                        </div>
+                    </div>
+
+                    <div class="mb-3" id="searchResultsDropdown">
+                        <label for="searchResults" class="form-label">Corrispondenze</label>
+                        <select class="form-select" id="searchResults" size="5"></select>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="nomelegale" class="col-sm-4 col-form-label">Nome Legale (*)</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="nomelegale" id="nomelegale">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="cognomelegale" class="col-sm-4 col-form-label">Cognome Legale (*)</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="cognomelegale" id="cognomelegale">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="telefonolegale" class="col-sm-4 col-form-label">Telefono Legale</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="telefonolegale" id="telefonolegale">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="emaillegale" class="col-sm-4 col-form-label">Email Legale</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="emaillegale" id="emaillegale">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="pecdue" class="col-sm-4 col-form-label">PEC secondo legale</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="pecdue" id="pecdue" oninput="searchLegalDue()">
+                        </div>
+                    </div>
+
+                    <div class="mb-3" id="searchResultsDropdownDue">
+                        <label for="searchResultsdue" class="form-label">Corrispondenze</label>
+                        <select class="form-select" id="searchResultsdue" size="5"></select>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="nomelegaledue" class="col-sm-4 col-form-label">Nome Legale 2</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="nomelegaledue" id="nomelegaledue">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="cognomelegaledue" class="col-sm-4 col-form-label">Cognome Legale 2</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="cognomelegaledue" id="cognomelegaledue">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="telefonolegaledue" class="col-sm-4 col-form-label">Telefono Legale 2</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="telefonolegaledue" id="telefonolegaledue">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="emaillegaledue" class="col-sm-4 col-form-label">Email Legale 2</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="emaillegaledue" id="emaillegaledue">
+                        </div>
+                    </div>
+                </div>
+				
+
+</table>
+
+				
+				            <div class="col-md-6">
+                <!-- Aggiungi la textbox per idAnagrafica -->
+                <div class="mb-3 row">
+                    <label for="idAnagrafica" class="col-sm-4 col-form-label">ID Anagrafica:</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="idanagrafica" id="idanagrafica" readonly>
+                    </div>
+                </div>
+
+                <!-- Rimuovi il dropdown dei risultati della ricerca dei legali -->
+
+                <!-- Aggiungi il bottone "Salva Contenzioso" -->
+                <div class="mb-3 row">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-8">
+                        <button type="submit" class="btn btn-primary">Salva Contenzioso</button>
+                    </div>
+						  <div style="margin-top: 20px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </form>
+        <script>
+        // JavaScript code to extract the 'idanagrafica' parameter from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const idanagrafica = urlParams.get('idanagrafica');
+
+        // Set the value of the input field with id "idanagrafica" to the extracted value
+        document.getElementById('idanagrafica').value = idanagrafica;
+
+        // Funzione per la ricerca dinamica del legale
+        function searchLegal() {
+            const pec = document.getElementById('pec').value;
+            // Effettua una richiesta AJAX al server per cercare il legale in base all'indirizzo PEC
+            if (pec.length >= 3) {  // Esegui la ricerca solo se l'utente ha inserito almeno 3 caratteri
+                fetch(`/search_legal?pec=${pec}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const searchResultsDropdown = document.getElementById('searchResultsDropdown');
+                        const searchResults = document.getElementById('searchResults');
+                        searchResults.innerHTML = '';  // Cancella i risultati precedenti
+
+                        if (data.length > 0) {
+                            data.forEach(result => {
+                                // Aggiungi i risultati all'elenco a discesa
+                                const option = document.createElement('option');
+                                option.value = result.nome;
+                                option.innerText = result.nome + ' ' + result.cognome;
+                                option.addEventListener('click', function() {
+                                    // Popola i campi con i valori selezionati
+                                    document.getElementById('pec').value = result.pec;
+                                    document.getElementById('nomelegale').value = result.nome;
+                                    document.getElementById('cognomelegale').value = result.cognome;
+                                    document.getElementById('telefonolegale').value = result.telefono;
+                                    document.getElementById('emaillegale').value = result.email;
+                                    searchResultsDropdown.style.display = 'none';  // Nascondi l'elenco a discesa
+                                });
+                                searchResults.appendChild(option);
+                            });
+                            searchResultsDropdown.style.display = 'block';  // Mostra l'elenco a discesa
+                        } else {
+                            searchResultsDropdown.style.display = 'none';  // Nascondi l'elenco a discesa se non ci sono risultati
+                        }
+                    })
+                    .catch(error => console.error(error));
+            } else {
+                // Nascondi l'elenco a discesa se la query è troppo corta
+                document.getElementById('searchResultsDropdown').style.display = 'none';
+            }
+        }
+		
+				// Funzione per la ricerca dinamica del secondo legale
+		function searchLegalDue() {
+			const pecDue = document.getElementById('pecdue').value;
+			// Effettua una richiesta AJAX al server per cercare il legale in base all'indirizzo PEC
+			if (pecDue.length >= 3) {  // Esegui la ricerca solo se l'utente ha inserito almeno 3 caratteri
+				fetch(`/search_legal?pec=${pecDue}`)
+					.then(response => response.json())
+					.then(data => {
+						const searchResultsDropdownDue = document.getElementById('searchResultsDropdownDue');
+						const searchResultsDue = document.getElementById('searchResultsdue');
+						searchResultsDue.innerHTML = '';  // Cancella i risultati precedenti
+
+						if (data.length > 0) {
+							data.forEach(result => {
+								// Aggiungi i risultati all'elenco a discesa
+								const option = document.createElement('option');
+								option.value = result.nome;
+								option.innerText = result.nome + ' ' + result.cognome;
+								option.addEventListener('click', function() {
+									// Popola i campi con i valori selezionati
+									document.getElementById('pecdue').value = result.pec;
+									document.getElementById('nomelegaledue').value = result.nome;
+									document.getElementById('cognomelegaledue').value = result.cognome;
+									document.getElementById('telefonolegaledue').value = result.telefono;
+									document.getElementById('emaillegaledue').value = result.email;
+									searchResultsDropdownDue.style.display = 'none';  // Nascondi l'elenco a discesa
+								});
+								searchResultsDue.appendChild(option);
+							});
+							searchResultsDropdownDue.style.display = 'block';  // Mostra l'elenco a discesa
+						} else {
+							searchResultsDropdownDue.style.display = 'none';  // Nascondi l'elenco a discesa se non ci sono risultati
+						}
+					})
+					.catch(error => console.error(error));
+			} else {
+				// Nascondi l'elenco a discesa se la query è troppo corta
+				document.getElementById('searchResultsDropdownDue').style.display = 'none';
+			}
+		}
+		
+						// Funzione per la ricerca dinamica del secondo legale
+		function searchAutoritaGiudiziaria() {
+			    const autoritagiudiziaria = document.getElementById('autoritagiudiziaria').value;
+			// Effettua una richiesta AJAX al server per cercare il legale in base all'indirizzo PEC
+			if (autoritagiudiziaria.length >= 3) {  // Esegui la ricerca solo se l'utente ha inserito almeno 3 caratteri
+				fetch(`/cerca_autorita_giudiziaria?autorita=${autoritagiudiziaria}`)
+					.then(response => response.json())
+					.then(data => {
+						const searchResultsDropdownAutoritaGiudiziaria = document.getElementById('searchResultsDropdownAutoritaGiudiziaria');
+						const searchResultAutoritaGiudiziaria = document.getElementById('searchResultAutoritaGiudiziaria');
+						searchResultAutoritaGiudiziaria.innerHTML = '';  // Cancella i risultati precedenti
+
+						if (data.length > 0) {
+							data.forEach(result => {
+								// Aggiungi i risultati all'elenco a discesa
+								const option = document.createElement('option');
+								option.value = result.nome;
+								option.innerText = result.nome
+								option.addEventListener('click', function() {
+									// Popola i campi con i valori selezionati
+									document.getElementById('autoritagiudiziaria').value = result.nome;
+									searchResultsDropdownAutoritaGiudiziaria.style.display = 'none';  // Nascondi l'elenco a discesa
+								});
+								searchResultAutoritaGiudiziaria.appendChild(option);
+							});
+							searchResultAutoritaGiudiziaria.style.display = 'block';  // Mostra l'elenco a discesa
+						} else {
+							searchResultAutoritaGiudiziaria.style.display = 'none';  // Nascondi l'elenco a discesa se non ci sono risultati
+						}
+					})
+					.catch(error => console.error(error));
+			} else {
+				// Nascondi l'elenco a discesa se la query è troppo corta
+				document.getElementById('searchResultAutoritaGiudiziaria').style.display = 'none';
+			}
+		}
+		
+								// Funzione per la ricerca dinamica del secondo legale
+		function searchAvvocatoEnte() {
+			    const nomecompletoavvocatoente = document.getElementById('nomecompletoavvocatoente').value;
+			// Effettua una richiesta AJAX al server per cercare il legale in base all'indirizzo PEC
+			if (nomecompletoavvocatoente.length >= 3) {  // Esegui la ricerca solo se l'utente ha inserito almeno 3 caratteri
+				fetch(`/cerca_avvocato_ente?nomecompleto=${nomecompletoavvocatoente}`)
+					.then(response => response.json())
+					.then(data => {
+						const searchResultsDropdownAvvocatoEnte = document.getElementById('searchResultsDropdownAvvocatoEnte');
+						const searchResultsAvvocatoEnte = document.getElementById('searchResultAvvocatoEnte');
+						searchResultsAvvocatoEnte.innerHTML = '';  // Cancella i risultati precedenti
+
+						if (data.length > 0) {
+							data.forEach(result => {
+								// Aggiungi i risultati all'elenco a discesa
+								const option = document.createElement('option');
+								option.value = result.nomecompleto;
+								option.innerText = result.nomecompleto
+								option.addEventListener('click', function() {
+									// Popola i campi con i valori selezionati
+									document.getElementById('nomecompletoavvocatoente').value = result.nomecompleto;
+									document.getElementById('idavvocatoente').value = result.idavvocatoente;
+									searchResultsDropdownAvvocatoEnte.style.display = 'none';  // Nascondi l'elenco a discesa
+								});
+								searchResultAvvocatoEnte.appendChild(option);
+							});
+							searchResultAvvocatoEnte.style.display = 'block';  // Mostra l'elenco a discesa
+						} else {
+							searchResultAvvocatoEnte.style.display = 'none';  // Nascondi l'elenco a discesa se non ci sono risultati
+						}
+					})
+					.catch(error => console.error(error));
+			} else {
+				// Nascondi l'elenco a discesa se la query è troppo corta
+				document.getElementById('searchResultAvvocatoEnte').style.display = 'none';
+			}
+		}
+		
+		
+        </script>
+		<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const annotributouno = document.getElementById("annotributouno");
+        const annotributodue = document.getElementById("annotributodue");
+
+        annotributouno.addEventListener("input", function () {
+            annotributodue.value = annotributouno.value;
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    </div>
+</body>
+{% endblock %}
+</html>

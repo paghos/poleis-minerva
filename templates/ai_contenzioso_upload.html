@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aggiunta contenzioso con AI - MINERVA</title>
+    {% extends "__style__.html" %}
+    {% block content %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border: 0.25em solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 0.25em solid #9300ee; /* Custom color */
+            animation: spinner-border .75s linear infinite;
+        }
+        @keyframes spinner-border {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #loadingOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        #loadingOverlay p {
+            margin-top: 1rem;
+            color: #9300ee; /* Custom color */
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Aggiungi contenzioso con AI🪄</h1>
+        <p>A partire dall'aggiornamento delle funzionalità di Giugno 2024, Minerva permette di importare in maniera semplice e veloce i contenziosi, grazie all'uso dell'Intelligenza Artificiale.</p>
+        <p>La funzionalità è al momento in fase di <i>sperimentazione.</i></p>
+        <hr>
+        <p>Per iniziare, carica il file di un ricorso.</p>
+        <form id="uploadForm">
+            <input type="file" name="file" id="fileInput">
+            <button type="submit" class="btn btn-primary mr-2"> <i class="fas fa-upload"></i> Upload</button>
+        </form>
+        <p id="response"></p>
+        <div class="mb-3 row">
+            <label for="idAnagrafica" class="col-sm-4 col-form-label">L'anagrafica a cui aggiungere il contenzioso è:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="idanagrafica" id="idanagrafica" readonly>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay">
+        <div class="spinner-border"></div>
+        <br>
+        <p>Elaborazione...</p>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const idanagrafica = urlParams.get('idanagrafica');
+
+        document.getElementById('idanagrafica').value = idanagrafica;
+
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Show loading overlay
+            document.getElementById('loadingOverlay').style.display = 'flex';
+
+            var formData = new FormData();
+            var fileInput = document.getElementById('fileInput');
+            formData.append('file', fileInput.files[0]);
+            formData.append('idanagrafica', idanagrafica);
+
+            fetch('/ai_upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                document.getElementById('response').textContent = JSON.stringify(data);
+            })
+            .catch(error => {
+                document.getElementById('response').textContent = 'Errore: ' + error;
+            })
+            .finally(() => {
+                // Hide loading overlay after response is received
+                document.getElementById('loadingOverlay').style.display = 'none';
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+</body>
+{% endblock %}
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DataDump - MINERVA</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-...">
+
+{% extends "__style__.html" %}
+
+{% block content %}
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="mt-4 mb-4">Tutti i contenziosi</h1>
+		<h5 class="mt-4 mb-4">Tutti i contenziosi con le rispettive anagrafiche di aziende/privati e legali associati</h5>
+		        <a class="btn btn-primary" href="{{ url_for('index') }}">Torna alla Dashboard</a>
+		<button id="exportExcelButton" class="btn btn-success">Esporta in Excel</button>
+        <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID Contenzioso</th>
+                    <th>ID Privato-Azienda</th>
+                    <th>ID Legale 1</th>
+                    <th>ID Legale 2</th>
+					<th>ID Avv. Ente </th>
+                    <th>Tipologia</th>
+                    <th>Anno/i tributo</th>
+                    <th>Anno presentazione</th>
+                    <th>Valore</th>
+                    <th>Numero di Protocollo</th>
+                    <th>Data Protocollo</th>
+                    <th>Avvocato Ente</th>
+                    <th>Autorità giudiziaria</th>
+                    <th>Numero RG</th>
+                    <th>Oggetto</th>
+                    <th>Data udienza</th>
+					<th>Preavviso udienza</th>
+                    <th>Sentenza</th>
+                    <th>Note</th>
+                    <th>Nome completo o rag. sociale</th>
+                    <th>E-mail</th>
+                    <th>PEC</th>
+                    <th>Telefono</th>
+                    <th>CF/P.IVA</th>
+                    <th>Nome completo legale</th>
+                    <th>Telefono legale</th>
+                    <th>E-mail legale</th>
+                    <th>PEC legale</th>
+                    <th>Nome completo legale 2</th>
+                    <th>Telefono legale 2</th>
+                    <th>E-mail legale 2</th>
+                    <th>PEC legale 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contenzioso, idanagrafica,tp_dataudienza, tp_preavvisoudienza, tp_nome, tp_cognome, tp_email, tp_pec, tp_telefono, tp_codicefiscale, tp_ragsociale, tp_piva, tp_nome_legale, tp_nome_legale_due, tp_cognome_legale, tp_cognome_legale_due, tp_telefono_legale, tp_telefono_legale_due, tp_email_legale, tp_email_legale_due, tp_pec_legale, tp_pec_legale_due, tp_idlegale, tp_idlegale_due in contenziosi %}
+                <tr>
+                    <td><a href="/contenzioso?idcontenzioso={{ contenzioso.idcontenzioso }}">{{ contenzioso.idcontenzioso }}</a></td>
+                    <td><a href="{% if idanagrafica.startswith('PP') %}/riepilogo_privato?idanagrafica={{ idanagrafica }}{% else %}/riepilogo_azienda?idanagrafica={{ idanagrafica }}{% endif %}">{{ idanagrafica }}</a></td>
+                    <td><a href="/riepilogo_legale?idlegale={{tp_idlegale}}">{{ tp_idlegale }}</a></td>
+                    <td><a href="/riepilogo_legale?idlegale={{tp_idlegale_due}}">{{ tp_idlegale_due }}</a></td>
+					<td><a href="/riepilogo_avvocato_ente?idavvocatoente={{contenzioso.idavvocatoente}}">{{ contenzioso.idavvocatoente }}</a></td>
+                    <td>{{ contenzioso.tipologia }}</td>
+                    <td>{{ contenzioso.annotributouno }} - {{contenzioso.annotributodue}}</td>
+                    <td>{{ contenzioso.annopresentazione }}</td>
+                    <td>{{ contenzioso.valore }}</td>
+                    <td>{{ contenzioso.numeroprotocollo }}</td>
+                    <td>{{ contenzioso.dataprotocollo }}</td>
+                    <td>{{ contenzioso.avvocatoente }}</td>
+                    <td>{{ contenzioso.autoritagiudiziaria }}</td>
+                    <td>{{ contenzioso.numerorg }}</td>
+                    <td>{{ contenzioso.oggetto }}</td>
+                    <td>{{ tp_dataudienza }}</td>
+					<td>{{ tp_preavvisoudienza }}</td>
+                    <td>{{ contenzioso.sentenza }}</td>
+                    <td>{{ contenzioso.note }}</td>
+                    <td>{{ tp_nome }} {{tp_cognome}} {{tp_ragsociale}}</td>
+                    <td>{{ tp_email }}</td>
+                    <td>{{ tp_pec }}</td>
+                    <td>{{ tp_telefono }}</td>
+                    <td>{{ tp_codicefiscale }} {{ tp_piva }}</td>
+                    <td>{{ tp_nome_legale }} {{tp_cognome_legale}}</td>
+                    <td>{{ tp_telefono_legale }}</td>
+                    <td>{{ tp_email_legale }}</td>
+                    <td>{{ tp_pec_legale }}</td>
+                    <td>{{ tp_nome_legale_due }} {{tp_cognome_legale_due}}</td>
+                    <td>{{ tp_telefono_legale_due }}</td>
+                    <td>{{ tp_email_legale_due }}</td>
+                    <td>{{ tp_pec_legale_due }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+        <a class="btn btn-primary" href="{{ url_for('index') }}">Torna alla Dashboard</a>
+		<button id="exportExcelButton" class="btn btn-success"><i class="fas fa-save"></i> Esporta in Excel</button>
+		  <div style="margin-top: 100px;">
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+	<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('exportExcelButton').addEventListener('click', function() {
+        // Ottieni la tabella
+        var table = document.querySelector('.table');
+
+        // Crea un array per i dati da esportare
+        var data = [];
+        var headers = [];
+        var rows = table.querySelectorAll('tbody tr');
+
+        // Ottieni l'intestazione della tabella
+        table.querySelectorAll('thead th').forEach(function(header) {
+            headers.push(header.textContent);
+        });
+
+        // Aggiungi intestazione
+        data.push(headers);
+		
+		
+        // Estrai dati dalle righe
+        rows.forEach(function(row) {
+            var rowData = [];
+            row.querySelectorAll('td').forEach(function(cell) {
+                rowData.push(cell.textContent);
+            });
+            data.push(rowData);
+        });
+
+        // Crea un foglio Excel
+        var ws = XLSX.utils.aoa_to_sheet(data);
+
+        // Crea un libro Excel
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'MINERVA');
+		
+		
+        // Esporta il libro in un file Excel
+        XLSX.writeFile(wb, 'MinervaExport.xlsx');
+    });
+});
+</script>
+
+</body>
+{% endblock %}
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Riepilogo azienda - MINERVA</title>
+	
+ {% extends "__style__.html" %}
+
+{% block content %}
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>Riepilogo azienda (AZ)</h1>
+        </div>
+
+        <table class="table">
+            <tr>
+                <th>ID Anagrafica</th>
+                <td>{{ tp_idanagrafica }}</td>
+            </tr>
+            <tr>
+                <th>Ragione sociale</th>
+                <td>{{ tp_ragsociale }}</td>
+            </tr>
+            <tr>
+                <th>Partita IVA:</th>
+                <td>{{ tp_piva }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ tp_email }}</td>
+            </tr>
+            <tr>
+                <th>PEC</th>
+                <td>{{ tp_pec }}</td>
+            </tr>
+            <tr>
+                <th>Telefono</th>
+                <td>{{ tp_telefono }}</td>
+            </tr>
+
+        </table>
+
+        <h2 class="mb-4">Contenziosi Associati ({{ contenziosi|length }})</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID Contenzioso</th>
+                    <th>Tipologia</th>
+                    <th>Anno tributo</th>
+                    <th>Avvocato Ente</th>
+                    <th>Valore</th>
+                    <!-- Aggiungi altre colonne della tabella per mostrare i dettagli del contenzioso -->
+                </tr>
+            </thead>
+            <tbody>
+			{% set count = 0 %}
+                {% for contenzioso in contenziosi %}
+                    <tr>
+						<td><a href="/contenzioso?idcontenzioso={{contenzioso.idcontenzioso}}">{{ contenzioso.idcontenzioso }}</a></td>
+                        <td>{{ contenzioso.tipologia }}</td>
+                        <td>{{ contenzioso.annotributouno }} - {{ contenzioso.annotributodue }}</td>
+                        <td><a href="/riepilogo_avvocato_ente?idavvocatoente={{contenzioso.idavvocatoente}}">{{ contenzioso.avvocatoente }}</td>
+                        <td>{{ contenzioso.valore }} €</td>
+                        {% set count = count + 1 %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <form method="GET" action="/nuovo_contenzioso">
+                <!-- ... (altri campi dell'anagrafica) ... -->
+                <input type="hidden" name="idanagrafica" value="{{ tp_idanagrafica }}">
+                <button type="submit" class="btn btn-primary" id="nuovoContenziosoButton">Nuovo Contenzioso</button>
+            </form>
+            <form method="GET" action="/nuovo_contenzioso_ai">
+                <!-- ... (altri campi dell'anagrafica) ... -->
+                <input type="hidden" name="idanagrafica" value="{{ tp_idanagrafica }}">
+                <button type="submit" class="btn btn-primary" id="nuovoContenziosoAIButton">Nuovo Contenzioso AI</button>
+            </form>
+            <button class="btn btn-primary" id="stampaButton" onclick="stampaPagina()">Stampa</button>
+        </div>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script>
+        function stampaPagina() {
+            // Nasconde il pulsante "Stampa"
+            document.getElementById("stampaButton").style.display = "none";
+        document.getElementById("nuovoContenziosoButton").style.display = "none";
+            // Apre il menu di stampa del browser
+            window.print();
+            // Ripristina il pulsante "Stampa" dopo la stampa
+            document.getElementById("stampaButton").style.display = "block";
+            document.getElementById("nuovoContenziosoButton").style.display = "block";
+        }
+    </script>
+</body>
+{% endblock %}
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Modifica del contenzioso {{idcontenzioso}} - MINERVA</title>
+{% extends "__style__.html" %}
+
+{% block content %}
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>Modifica Contenzioso {{idcontenzioso}}</h1>
+        </div>
+    <form method="POST">
+        <table class="table">
+            <tr>
+                <th>ID Contenzioso</th>
+                <td>{{ idcontenzioso }}</td>
+            </tr>
+			<tr>
+				<th><label for="numeroprotocollo">Numero di protocollo</label></th>
+				<td><input type="text" name="numeroprotocollo" value="{{ existing_data.numeroprotocollo }}" class="form-control" required></td>
+			</tr>
+			<tr>
+				<th><label for="dataprotocollo">Data di protocollo</label></th>
+				<td><input type="date" name="dataprotocollo" value="{{ existing_data.dataprotocollo }}" class="form-control" required></td>
+			</tr>
+			<tr>
+				<th><label for="oggetto">Oggetto</label></th>
+				<td><input type="text" name="oggetto" value="{{ existing_data.oggetto }}" class="form-control" required></td>
+			</tr>
+			<tr>
+				<th><label for="tipologia">Tipologia</label></th>
+				<td><div class="form-group row">
+    <div class="col-sm-8">
+        <select class="form-control" name="tipologia" required>
+            <option value="IMU" {% if existing_data.tipologia == 'IMU' %}selected{% endif %}>IMU</option>
+            <option value="TARI" {% if existing_data.tipologia == 'TARI' %}selected{% endif %}>TARI</option>
+            <option value="Acqua" {% if existing_data.tipologia == 'Acqua' %}selected{% endif %}>Acqua</option>
+            <option value="COSAP" {% if existing_data.tipologia == 'COSAP' %}selected{% endif %}>COSAP</option>
+            <option value="Imposta di Soggiorno" {% if existing_data.tipologia == 'Imposta di Soggiorno' %}selected{% endif %}>Imposta di Soggiorno</option>
+			<option value="Varia" {% if existing_data.tipologia == 'Varia' %}selected{% endif %}>Varia</option>
+		</select>
+    </div>
+</div>
+</td>
+			</tr>
+
+            <tr>
+				<th><label for="oggetto">Anno tributo</label></th>
+				<td>						<div class="col-sm-8 d-flex">
+							<input type="text" name="annotributouno" value="{{ existing_data.annotributouno }}" required class="form-control" style="margin-left: 10px; margin-right: 10px; width: 100px;" maxlength="4">
+							<span class="mx-2">-</span>
+							<input type="text" name="annotributodue" value="{{ existing_data.annotributodue }}" required class="form-control"style="margin-left: 10px; margin-right: 10px; width: 100px;" maxlength="4">
+						</div></td>
+
+
+
+            </tr>
+            <tr>
+			<tr>
+				<th><label for="annopresentazione">Anno di presentazione del ricorso</label></th>
+				<td><input type="text" name="annopresentazione" value="{{ existing_data.annopresentazione }}" class="form-control" required></td>
+			</tr>
+			<tr>
+				<th><label for="valore">Valore</label></th>
+				<td><input type="text" name="valore" pattern="^[0-9]*\.?[0-9]*$" title="Inserire solo numeri e indicare con il punto (.) i decimali. Ad esempio, il valore 100.000,10€, deve essere scritto come 100000.10" value="{{ existing_data.valore }}" class="form-control" required></td>
+			</tr>
+			<tr>
+                        <th><label for="autoritagiudiziaria" class="col-sm-4 col-form-label">Autorità Giudiziaria</label></th>
+                        <td><input type="text" class="form-control" name="autoritagiudiziaria" id="autoritagiudiziaria" value="{{ existing_data.autoritagiudiziaria }}" oninput="searchAutoritaGiudiziaria()"></td>		
+			</tr>
+			<tr>
+                        <th><label for="searchResultAutoritaGiudiziaria" class="form-label">Corrispondenze</label></th>
+                        <td><select class="form-select" id="searchResultAutoritaGiudiziaria" size="5"></select></td>
+			</tr>
+
+			<tr>
+				<th><label for="numerorg">Numero RG</label></th>
+				<td><input type="text" name="numerorg" value="{{ existing_data.numerorg }}" class="form-control"></td>
+			</tr>
+			<tr>
+				<th><label for="dataudienza">Data udienza</label></th>
+				<td><input type="datetime-local" name="dataudienza" value="{{ existing_data_calendario.data }}" class="form-control" required></td>
+			</tr>
+
+			<tr>
+				<th><label for="sentenza">Sentenza</label></th>
+				<td><input type="sentenza" name="sentenza" value="{{ existing_data.sentenza }}" class="form-control"></td>
+			</tr>
+			<tr>
+				<th><label for="note">Note</label></th>
+				<td><input type="text" name="note" value="{{ existing_data.note }}" class="form-control"></td>
+			</tr>
+        </table>
+
+	<div class="d-inline-block">
+    <p class="d-inline-block mr-2">Modificare l'avvocato dell'ente assegnato al contenzioso? <a href="/modifica_assegnazione_avvocato_ente?idcontenzioso={{idcontenzioso}}" class="btn btn-primary">Premi qui</a></p>
+</div>
+
+
+		<br>
+		<button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Salva modifiche</button>
+	
+
+
+    </form>
+        <div class="d-flex justify-content-between align-items-center">
+            <form method="GET" action="/modifica_contenzioso">
+                <input type="hidden" name="idanagrafica" value="{{ tp_idanagrafica }}">
+            </form>
+        </div>
+    </div>
+			  <div style="margin-top: 100px;">
+    <!-- Collegamento a Bootstrap JS (facoltativo) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <script>
+        function stampaPagina() {
+            // Nasconde il pulsante "Stampa"
+            document.getElementById("stampaButton").style.display = "none";
+
+            // Apre il menu di stampa del browser
+            window.print();
+            // Ripristina il pulsante "Stampa" dopo la stampa
+            document.getElementById("stampaButton").style.display = "block";
+
+        }
+				function searchAutoritaGiudiziaria() {
+			    const autoritagiudiziaria = document.getElementById('autoritagiudiziaria').value;
+			// Effettua una richiesta AJAX al server per cercare il legale in base all'indirizzo PEC
+			if (autoritagiudiziaria.length >= 3) {  // Esegui la ricerca solo se l'utente ha inserito almeno 3 caratteri
+				fetch(`/cerca_autorita_giudiziaria?autorita=${autoritagiudiziaria}`)
+					.then(response => response.json())
+					.then(data => {
+						const searchResultsDropdownAutoritaGiudiziaria = document.getElementById('searchResultsDropdownAutoritaGiudiziaria');
+						const searchResultAutoritaGiudiziaria = document.getElementById('searchResultAutoritaGiudiziaria');
+						searchResultAutoritaGiudiziaria.innerHTML = '';  // Cancella i risultati precedenti
+
+						if (data.length > 0) {
+							data.forEach(result => {
+								// Aggiungi i risultati all'elenco a discesa
+								const option = document.createElement('option');
+								option.value = result.nome;
+								option.innerText = result.nome
+								option.addEventListener('click', function() {
+									// Popola i campi con i valori selezionati
+									document.getElementById('autoritagiudiziaria').value = result.nome;
+									searchResultsDropdownAutoritaGiudiziaria.style.display = 'none';  // Nascondi l'elenco a discesa
+								});
+								searchResultAutoritaGiudiziaria.appendChild(option);
+							});
+							searchResultAutoritaGiudiziaria.style.display = 'block';  // Mostra l'elenco a discesa
+						} else {
+							searchResultAutoritaGiudiziaria.style.display = 'none';  // Nascondi l'elenco a discesa se non ci sono risultati
+						}
+					})
+					.catch(error => console.error(error));
+			} else {
+				// Nascondi l'elenco a discesa se la query è troppo corta
+				document.getElementById('searchResultAutoritaGiudiziaria').style.display = 'none';
+			}
+		}
+    </script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+</body>
+{% endblock %}
+</html>

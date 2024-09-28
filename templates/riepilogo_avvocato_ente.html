@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Riepilogo avvocato ente - MINERVA</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+	
+
+ {% extends "__style__.html" %}
+
+{% block content %}
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>Riepilogo avvocato ente (AE)</h1>
+        </div>
+
+        <table class="table">
+            <tr>
+                <th>ID Legale</th>
+                <td>{{ anagrafica_esistente.idavvocatoente }}</td>
+            </tr>
+            <tr>
+                <th>Nome</th>
+                <td>{{ anagrafica_esistente.nome }}</td>
+            </tr>
+            <tr>
+                <th>Cognome:</th>
+                <td>{{ anagrafica_esistente.cognome }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ anagrafica_esistente.email }}</td>
+            </tr>
+            <tr>
+                <th>PEC</th>
+                <td>{{ anagrafica_esistente.pec }}</td>
+            </tr>
+            <tr>
+                <th>Telefono</th>
+                <td>{{ anagrafica_esistente.telefono }}</td>
+            </tr>
+
+        </table>
+
+        <h2 class="mb-4">Contenziosi Associati ({{ contenziosi|length }})</h2>
+        <table class="table table-striped" id="tabellaContenziosi">
+            <thead>
+                <tr>
+                    <th>ID CZ</th>
+                    <th>Nome completo o rag.sociale</th>
+                    <th>Tributo</th>
+                    <th>Anno presentazione</th>
+                    <th>Valore</th>
+                    <th>Protocollo</th>
+                    <th>Autorità giudiziaria</th>
+                    <th>Numero RG</th>
+                    <th>Oggetto</th>
+					<th>Note</th>
+					<th>Sentenza</th>
+                </tr>
+            </thead>
+            <tbody>
+			    {% set count = 0 %}
+                {% for contenzioso , tp_nome, tp_cognome, tp_ragsociale, idanagrafica in contenziosi %}
+                <tr>
+                    <td><a href="/contenzioso?idcontenzioso={{ contenzioso.idcontenzioso }}">{{ contenzioso.idcontenzioso }}</a></td>
+                    <td><a href="{% if idanagrafica.startswith('PP') %}/riepilogo_privato?idanagrafica={{ idanagrafica }}{% else %}/riepilogo_azienda?idanagrafica={{ idanagrafica }}{% endif %}">{{ tp_nome }} {{tp_cognome}} {{tp_ragsociale}}</a></td>
+				<td>
+					{% if contenzioso.annotributouno == contenzioso.annotributodue %}
+						{{ contenzioso.tipologia }} {{ contenzioso.annotributouno }}
+					{% else %}
+						{{ contenzioso.tipologia }} {{ contenzioso.annotributouno }} - {{ contenzioso.annotributodue }}
+					{% endif %}
+				</td>
+
+
+                    <td>{{ contenzioso.annopresentazione }}</td>
+                    <td>{{ contenzioso.valore }} €</td>
+                    <td>N° {{ contenzioso.numeroprotocollo }} del {{ contenzioso.dataprotocollo }}</td>
+                    <td>{{ contenzioso.autoritagiudiziaria }}</td>
+                    <td>{{ contenzioso.numerorg }}</td>
+                    <td>{{ contenzioso.oggetto }}</td>
+					<td>{{ contenzioso.note }}</td>
+					<td>{{ contenzioso.sentenza }}</td>
+					{% set count = count + 1 %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between align-items-center">
+		<button class="btn btn-success" id="esportaExcelButton" onclick="esportaExcel()"><i class="fas fa-save"></i> Esporta Excel</button>
+            <form method="GET" action="/nuovo_contenzioso">
+                <!-- ... (altri campi dell'anagrafica) ... -->
+                <input type="hidden" name="idlegale" value="{{ tp_idlegale }}">
+                
+            </form>
+            <button class="btn btn-primary" id="stampaButton" onclick="stampaPagina()">Stampa</button>
+        </div>
+    </div>
+	  <div style="margin-top: 100px;">
+
+    <!-- Collegamento a Bootstrap JS (facoltativo) -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script>
+        function stampaPagina() {
+            // Nasconde il pulsante "Stampa"
+            document.getElementById("stampaButton").style.display = "none";
+        document.getElementById("nuovoContenziosoButton").style.display = "none";
+            // Apre il menu di stampa del browser
+            window.print();
+            // Ripristina il pulsante "Stampa" dopo la stampa
+            document.getElementById("stampaButton").style.display = "block";
+            document.getElementById("nuovoContenziosoButton").style.display = "block";
+        }
+    function esportaExcel() {
+        var tabella = document.getElementById("tabellaContenziosi");
+        var workbook = XLSX.utils.book_new();
+        var sheetData = [];
+
+        // Aggiungi intestazione
+        var headerRow = [];
+        for (var i = 0; i < tabella.rows[0].cells.length; i++) {
+            headerRow.push(tabella.rows[0].cells[i].innerText);
+        }
+        sheetData.push(headerRow);
+
+        // Aggiungi dati della tabella escludendo gli href
+        for (var i = 1; i < tabella.rows.length; i++) {
+            var rowData = [];
+            for (var j = 0; j < tabella.rows[i].cells.length; j++) {
+                // Escludi gli href
+                var cellText = tabella.rows[i].cells[j].innerText;
+                rowData.push(cellText);
+            }
+            sheetData.push(rowData);
+        }
+
+        var worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'MINERVA');
+        XLSX.writeFile(workbook, 'MINERVA - Riepilogo contenziosi avvocato ente.xlsx');
+    }
+    </script>
+</body>
+{% endblock %}
+</html>
